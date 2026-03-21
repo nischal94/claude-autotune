@@ -1,2 +1,10 @@
 results/*.json
 results/*.log
+results/*.txt
+results/*.md
+__pycache__/
+*.pyc
+*.pyo
+.env
+.DS_Store
+scripts/__pycache__/
