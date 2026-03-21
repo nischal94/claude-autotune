@@ -31,10 +31,10 @@ score_of() {
 
 cd "$EXPERIMENT_DIR"
 
-# ── Source ANTHROPIC_API_KEY from zshrc if not set ───────────────────────────
+# ── Extract ANTHROPIC_API_KEY from zshrc if not set ─────────────────────────
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+    ANTHROPIC_API_KEY=$(grep 'ANTHROPIC_API_KEY=' ~/.zshrc | head -1 | sed 's/.*ANTHROPIC_API_KEY=//' | tr -d '"' | tr -d "'")
     export ANTHROPIC_API_KEY
-    ANTHROPIC_API_KEY=$(zsh -c "source ~/.zshrc 2>/dev/null; echo \$ANTHROPIC_API_KEY")
 fi
 
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then

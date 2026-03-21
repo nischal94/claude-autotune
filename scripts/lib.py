@@ -24,12 +24,15 @@ PROPOSER_MODEL = "claude-sonnet-4-6"              # prompt engineer
 def get_client() -> anthropic.Anthropic:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
-        # Try sourcing from ~/.zshrc
-        result = subprocess.run(
-            ["zsh", "-c", "source ~/.zshrc && echo $ANTHROPIC_API_KEY"],
-            capture_output=True, text=True
-        )
-        api_key = result.stdout.strip()
+        # Extract key directly from ~/.zshrc without sourcing the whole file
+        zshrc = Path.home() / ".zshrc"
+        if zshrc.exists():
+            for line in zshrc.read_text().splitlines():
+                line = line.strip()
+                if "ANTHROPIC_API_KEY" in line and "=" in line:
+                    _, _, val = line.partition("=")
+                    api_key = val.strip().strip('"').strip("'")
+                    break
     if not api_key:
         print("[lib] ERROR: ANTHROPIC_API_KEY not set. Add it to ~/.zshrc.", file=sys.stderr)
         sys.exit(1)
@@ -48,7 +51,7 @@ def call_claude(system: str, user: str, model: str, temperature: float = 0.0, ma
     return response.content[0].text
 
 
-def read_prompt(path: str | Path) -> str:
+def read_prompt(path) -> str:
     p = Path(path)
     # Resolve symlink if needed
     if p.is_symlink():
