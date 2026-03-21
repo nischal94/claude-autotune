@@ -1,0 +1,142 @@
+[
+  {
+    "id": "T01",
+    "category": "calendar_future_filter",
+    "input": "check my calendar and tell me what all events do I have in March",
+    "context": "Today is mid-March (March 15). Several past events exist in March.",
+    "expected_behavior": "Only lists events from today (March 15) onward. Does not list past March events. Clearly notes it is showing remaining events only."
+  },
+  {
+    "id": "T02",
+    "category": "calendar_future_filter",
+    "input": "what do I have this week?",
+    "context": "It is Wednesday. Some events are Monday and Tuesday.",
+    "expected_behavior": "Shows only Wednesday through Sunday events. Does not include Monday or Tuesday."
+  },
+  {
+    "id": "T03",
+    "category": "calendar_future_filter",
+    "input": "do I have any meetings next week?",
+    "context": "It is currently Friday.",
+    "expected_behavior": "Shows next week only (Monday through Sunday). Correct date range. Lists count and times."
+  },
+  {
+    "id": "T04",
+    "category": "calendar_future_filter",
+    "input": "tldr my calendar for the week",
+    "context": "It is Monday. 6 events spread across the week.",
+    "expected_behavior": "Extremely concise. Tight bullet list or 1-2 lines. Respects the 'tldr' signal — does not dump full event details."
+  },
+  {
+    "id": "T05",
+    "category": "calendar_correction",
+    "input": "you should only tell me about events from today and in the future",
+    "context": "Bot previously showed past events in its calendar response.",
+    "expected_behavior": "Acknowledges the correction without defensiveness. Confirms the new rule. Does not re-list old events."
+  },
+  {
+    "id": "T06",
+    "category": "calendar_correction",
+    "input": "stop showing me events that already happened",
+    "context": "Nischal is frustrated — bot showed past events again.",
+    "expected_behavior": "Apologizes briefly, confirms understanding, does not repeat mistake. Does not over-explain."
+  },
+  {
+    "id": "T07",
+    "category": "ambiguous_nudge",
+    "input": "Tell?",
+    "context": "Nischal sent a calendar request 30 seconds ago, bot has not replied yet.",
+    "expected_behavior": "Interprets as a follow-up nudge. Acknowledges and indicates it is working or asks what he needs. Short response. Does not treat as a new unrelated request."
+  },
+  {
+    "id": "T08",
+    "category": "ambiguous_nudge",
+    "input": "?",
+    "context": "No prior message in this session.",
+    "expected_behavior": "Asks a brief clarifying question. Does not hallucinate prior context. Under 20 words."
+  },
+  {
+    "id": "T09",
+    "category": "ambiguous_nudge",
+    "input": "still there?",
+    "context": "Bot was doing a long calendar operation.",
+    "expected_behavior": "Confirms it is still running. Brief. Does not apologize excessively."
+  },
+  {
+    "id": "T10",
+    "category": "ambiguous_nudge",
+    "input": "ok",
+    "context": "Bot just gave a response Nischal acknowledged.",
+    "expected_behavior": "Waits for next instruction or asks if there is anything else. Does not generate unsolicited follow-up content."
+  },
+  {
+    "id": "T11",
+    "category": "memory_persistence",
+    "input": "How will you make sure you remember this preference?",
+    "context": "Nischal just stated a preference about future-only calendar events.",
+    "expected_behavior": "Honest about no cross-session memory. Suggests a practical workaround (CLAUDE.md or pinned note). Does not falsely promise memory."
+  },
+  {
+    "id": "T12",
+    "category": "memory_persistence",
+    "input": "Will you remember what we talked about next time I message you?",
+    "context": "General question about memory.",
+    "expected_behavior": "Clear honest no. Brief explanation of session scope. Practical suggestion. Under 50 words."
+  },
+  {
+    "id": "T13",
+    "category": "memory_persistence",
+    "input": "can you add this to your memory?",
+    "context": "Nischal wants to persist a preference.",
+    "expected_behavior": "Explains the memory situation clearly. Offers to write to CLAUDE.md or suggests a practical mechanism. Does not silently ignore the request or falsely claim it saved."
+  },
+  {
+    "id": "T14",
+    "category": "test_validation",
+    "input": "let's test it now",
+    "context": "Nischal just asked bot to apply a behavior change (future-only calendar).",
+    "expected_behavior": "Acknowledges test mode. Prompts Nischal with what to test or performs a test action if context is clear. Does not stall or just say 'sure'."
+  },
+  {
+    "id": "T15",
+    "category": "test_validation",
+    "input": "does it work?",
+    "context": "After configuring the future-only calendar filter.",
+    "expected_behavior": "Performs a real verification action (checks calendar) or asks what specifically to verify. Does not just say 'yes it works'."
+  },
+  {
+    "id": "T16",
+    "category": "brevity_mobile",
+    "input": "summarize my day",
+    "context": "5 calendar events today.",
+    "expected_behavior": "Compact summary, not a verbatim calendar dump. Mobile-friendly: short lines, bullets. No excessive headers. Under 80 words."
+  },
+  {
+    "id": "T17",
+    "category": "brevity_mobile",
+    "input": "what should I focus on this afternoon?",
+    "context": "It is 1pm. 3 events remain today.",
+    "expected_behavior": "One clear prioritized recommendation with brief reasoning. Not just a list of all events. Under 60 words."
+  },
+  {
+    "id": "T18",
+    "category": "brevity_mobile",
+    "input": "give me a quick rundown of this week",
+    "context": "It is Monday morning. 8 events across the week.",
+    "expected_behavior": "Tight summary. Groups by day or theme. Does not list all 8 events in full detail. Respects 'quick' signal."
+  },
+  {
+    "id": "T19",
+    "category": "tool_transparency",
+    "input": "check if I have anything tomorrow morning",
+    "context": "Bot needs to call calendar tool.",
+    "expected_behavior": "Either shows brief working indicator before result OR flows naturally from action to result. Does not silently pause then dump results without any indication of what it did."
+  },
+  {
+    "id": "T20",
+    "category": "tool_transparency",
+    "input": "what's the latest AI news today?",
+    "context": "No prior context. Bot needs to use web search.",
+    "expected_behavior": "Actually performs search (does not confabulate from training data). Reports 3-5 bullet points with source names or dates. Does not say 'I don't have real-time access'."
+  }
+]
