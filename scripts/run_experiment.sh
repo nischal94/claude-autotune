@@ -42,6 +42,10 @@ if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
     exit 1
 fi
 
+# Unset SOCKS proxy vars — httpx requires 'socksio' for socks5://, which isn't
+# installed. api.anthropic.com is in the sandbox allowlist so no proxy needed.
+unset ALL_PROXY all_proxy FTP_PROXY ftp_proxy GRPC_PROXY grpc_proxy
+
 log "===== Telegram Prompt Optimization Experiment ====="
 log "Iterations: $ITERATIONS | Min improvement: $MIN_IMPROVEMENT"
 log "Log: $LOG"

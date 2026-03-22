@@ -40,15 +40,25 @@ def get_client() -> anthropic.Anthropic:
 
 
 def call_claude(system: str, user: str, model: str, temperature: float = 0.0, max_tokens: int = 2000) -> str:
+    import time
     client = get_client()
-    response = client.messages.create(
-        model=model,
-        max_tokens=max_tokens,
-        temperature=temperature,
-        system=system,
-        messages=[{"role": "user", "content": user}]
-    )
-    return response.content[0].text
+    for attempt in range(5):
+        try:
+            response = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                system=system,
+                messages=[{"role": "user", "content": user}]
+            )
+            return response.content[0].text
+        except Exception as e:
+            if "overloaded" in str(e).lower() and attempt < 4:
+                wait = 10 * (attempt + 1)
+                print(f"  [retry] API overloaded, waiting {wait}s...", flush=True)
+                time.sleep(wait)
+            else:
+                raise
 
 
 def read_prompt(path) -> str:

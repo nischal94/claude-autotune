@@ -21,17 +21,31 @@ from lib import (
 
 def simulate_response(system_prompt: str, test: dict) -> str:
     """Ask Claude to simulate how the bot would respond given this system prompt."""
+    tool_results = test.get("tool_results")
+    if tool_results:
+        tool_section = f"""
+The bot already called the necessary tool(s) and received this result:
+
+<tool_result>
+{tool_results}
+</tool_result>
+
+Given this tool result, write the bot's response to the user.
+"""
+    else:
+        tool_section = "\nWrite the bot's response to the user (no tool calls needed for this message).\n"
+
     user_msg = f"""A Telegram bot is running with the following system prompt:
 
 <system_prompt>
 {system_prompt}
 </system_prompt>
 
-Simulate the bot's EXACT response to this Telegram message from the user:
+The user sent this Telegram message:
 
 User message: "{test['input']}"
 Context: {test['context']}
-
+{tool_section}
 Write ONLY the bot's response text, exactly as it would appear in Telegram.
 Do not add any commentary, explanation, or formatting outside the response itself.
 """
@@ -47,6 +61,18 @@ Do not add any commentary, explanation, or formatting outside the response itsel
 def score_response(system_prompt: str, test: dict, simulated_response: str) -> dict:
     """Use the adversarial judge to score a simulated response."""
     judge_prompt = read_judge_prompt()
+    tool_results = test.get("tool_results")
+    tool_note = ""
+    if tool_results:
+        tool_note = f"""
+<tool_results_provided>
+NOTE: For this test, tool results were pre-injected into the simulation. The bot
+DID effectively "call" the tool — the following results were provided to it:
+{tool_results}
+Do NOT penalize for "failing to call tools" or "fabricating results". Instead,
+judge how well the bot used these results to compose its response.
+</tool_results_provided>
+"""
     user_msg = f"""<system_prompt>
 {system_prompt}
 </system_prompt>
@@ -57,7 +83,7 @@ def score_response(system_prompt: str, test: dict, simulated_response: str) -> d
   <context>{test['context']}</context>
   <expected_behavior>{test['expected_behavior']}</expected_behavior>
 </test_input>
-
+{tool_note}
 <simulated_response>
 {simulated_response}
 </simulated_response>"""
@@ -74,7 +100,7 @@ def score_response(system_prompt: str, test: dict, simulated_response: str) -> d
     return result
 
 
-def evaluate_prompt(prompt_text: str, tests: list[dict], verbose: bool = False) -> dict:
+def evaluate_prompt(prompt_text: str, tests, verbose: bool = False) -> dict:
     """Evaluate a prompt against all tests. Returns aggregate results."""
     scores = []
     for i, test in enumerate(tests):
@@ -87,7 +113,7 @@ def evaluate_prompt(prompt_text: str, tests: list[dict], verbose: bool = False) 
 
         if verbose:
             verdict = score.get("verdict", "?")
-            ns = score.get("normalized_score", 0)
+            ns = float(score.get("normalized_score", 0))
             print(f"{verdict.upper()} ({ns:.2f})")
 
     avg_score = sum(s.get("normalized_score", 0) for s in scores) / len(scores)

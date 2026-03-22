@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 
 
-def load_iteration_results(results_dir: Path) -> list[dict]:
+def load_iteration_results(results_dir: Path):
     files = sorted(results_dir.glob("iter_*.json"))
     results = []
     for f in files:
@@ -20,7 +20,7 @@ def load_iteration_results(results_dir: Path) -> list[dict]:
     return results
 
 
-def load_baseline(results_dir: Path) -> dict | None:
+def load_baseline(results_dir: Path):
     f = results_dir / "baseline.json"
     if f.exists():
         return json.loads(f.read_text())
