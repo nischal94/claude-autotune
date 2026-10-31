@@ -38,12 +38,6 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 ln -sf v001_baseline.txt prompts/current.txt
 ```
 
-### ⚠️ Pending: GitHub Action secret
-
-Add `ANTHROPIC_API_KEY` as a repository secret to activate `@claude` in PR comments:
-
-**Settings → Secrets and variables → Actions → New repository secret**
-
 ### Run experiment
 
 ```bash
